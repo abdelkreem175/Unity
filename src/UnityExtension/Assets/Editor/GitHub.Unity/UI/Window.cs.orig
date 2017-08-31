@@ -236,6 +236,19 @@ namespace GitHub.Unity
                 return;
             repository.OnRepositoryInfoChanged -= RefreshOnMainThread;
         }
+
+<<<<<<< HEAD
+        private void SwitchView(Subview from, Subview to)
+        {
+            GUI.FocusControl(null);
+            if (from != null)
+                from.OnDisable();
+            to.OnEnable();
+            Refresh();
+        }
+
+=======
+>>>>>>> fixes/refactor-window
         private void DoHeaderGUI()
         {
             GUILayout.BeginHorizontal(Styles.HeaderBoxStyle);
@@ -269,10 +282,24 @@ namespace GitHub.Unity
                 SubTab changeTab = activeTab;
                 EditorGUI.BeginChangeCheck();
                 {
-                    changeTab = TabButton(SubTab.Changes, ChangesTitle, changeTab);
-                    changeTab = TabButton(SubTab.History, HistoryTitle, changeTab);
-                    changeTab = TabButton(SubTab.Branches, BranchesTitle, changeTab);
+<<<<<<< HEAD
+                    tab = TabButton(SubTab.Changes, ChangesTitle, tab);
+                    tab = TabButton(SubTab.History, HistoryTitle, tab);
+                    tab = TabButton(SubTab.Branches, BranchesTitle, tab);
+                    tab = TabButton(SubTab.Settings, SettingsTitle, tab);
+=======
+                    if (HasRepository)
+                    {
+                        changeTab = TabButton(SubTab.Changes, ChangesTitle, changeTab);
+                        changeTab = TabButton(SubTab.History, HistoryTitle, changeTab);
+                        changeTab = TabButton(SubTab.Branches, BranchesTitle, changeTab);
+                    }
+                    else
+                    {
+                        changeTab = TabButton(SubTab.History, HistoryTitle, changeTab);
+                    }
                     changeTab = TabButton(SubTab.Settings, SettingsTitle, changeTab);
+>>>>>>> fixes/refactor-window
                 }
 
                 if (EditorGUI.EndChangeCheck())
@@ -292,9 +319,9 @@ namespace GitHub.Unity
         {
             if (changeTab != activeTab)
             {
-                var fromView = ActiveView;
+                var from = ActiveView;
                 activeTab = changeTab;
-                SwitchView(fromView, ActiveView);
+                SwitchView(@from, ActiveView);
             }
         }
 
@@ -329,7 +356,7 @@ namespace GitHub.Unity
 
         private void SignIn(object obj)
         {
-            AuthenticationWindow.Open();
+            PopupWindow.Open(PopupWindow.PopupViewType.AuthenticationView);
         }
 
         private void GoToProfile(object obj)
