@@ -236,16 +236,6 @@ namespace GitHub.Unity
                 return;
             repository.OnRepositoryInfoChanged -= RefreshOnMainThread;
         }
-
-        private void SwitchView(Subview from, Subview to)
-        {
-            GUI.FocusControl(null);
-            if (from != null)
-                from.OnDisable();
-            to.OnEnable();
-            Refresh();
-        }
-
         private void DoHeaderGUI()
         {
             GUILayout.BeginHorizontal(Styles.HeaderBoxStyle);
@@ -276,20 +266,18 @@ namespace GitHub.Unity
             // Subtabs & toolbar
             Rect mainNavRect = EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             {
-                SubTab tab = activeTab;
+                SubTab changeTab = activeTab;
                 EditorGUI.BeginChangeCheck();
                 {
-                    tab = TabButton(SubTab.Changes, ChangesTitle, tab);
-                    tab = TabButton(SubTab.History, HistoryTitle, tab);
-                    tab = TabButton(SubTab.Branches, BranchesTitle, tab);
-                    tab = TabButton(SubTab.Settings, SettingsTitle, tab);
+                    changeTab = TabButton(SubTab.Changes, ChangesTitle, changeTab);
+                    changeTab = TabButton(SubTab.History, HistoryTitle, changeTab);
+                    changeTab = TabButton(SubTab.Branches, BranchesTitle, changeTab);
+                    changeTab = TabButton(SubTab.Settings, SettingsTitle, changeTab);
                 }
 
                 if (EditorGUI.EndChangeCheck())
                 {
-                    var from = ActiveView;
-                    activeTab = tab;
-                    SwitchView(from, ActiveView);
+                    SetActiveTab(changeTab);
                 }
 
                 GUILayout.FlexibleSpace();
@@ -298,6 +286,28 @@ namespace GitHub.Unity
                     DoAccountDropdown();
             }
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void SetActiveTab(SubTab changeTab)
+        {
+            if (changeTab != activeTab)
+            {
+                var from = ActiveView;
+                activeTab = changeTab;
+                SwitchView(@from, ActiveView);
+            }
+        }
+
+        private void SwitchView(Subview fromView, Subview toView)
+        {
+            GUI.FocusControl(null);
+
+            if (fromView != null)
+                fromView.OnDisable();
+
+            toView.OnEnable();
+
+            Refresh();
         }
 
         private void DoAccountDropdown()
